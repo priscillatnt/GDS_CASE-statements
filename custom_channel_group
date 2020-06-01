@@ -1,19 +1,29 @@
 CASE
-WHEN REGEXP_MATCH (Source, 'freewayseguros.com|insureone.com|txlowcost.com') THEN 'Owned Brands'
-WHEN Default Channel Grouping = 'Affiliates' OR REGEXP_MATCH (Source, 'valuepenguin.com') THEN 'Affiliates'
-WHEN REGEXP_MATCH (Source, 'fb|instagram') AND REGEXP_MATCH(Medium, 'sm|cpc') THEN 'Paid Social'
-WHEN REGEXP_MATCH (Source, 'yl') AND REGEXP_MATCH(Medium, 'onlinedirectory') THEN 'Online Directory'
-WHEN Default Channel Grouping = 'Paid Search' AND REGEXP_MATCH(Query Match Type, 'Generic') THEN 'Generic Paid Search'
-WHEN Default Channel Grouping = 'Paid Search' AND REGEXP_MATCH(Query Match Type, 'Brand') THEN 'Branded Paid Search'
+WHEN REGEXP_MATCH (Source, 'wchat.freshchat.com|tracksupport.zendesk.com|mashmetrics.supporthero.io|mashmetrics.freshdesk.com|mashmetrics-inc.webpush.freshchat.com|optimize.google.com|insights.hotjar.com') THEN 'Exclusion - Internal Domains'
+WHEN REGEXP_MATCH (Source, 'mashmetrics.aftership.com|mashmetrics.com|mashmetrics.io|mashmetrics.live|mashmetrics2.com') THEN 'Internal'
+WHEN REGEXP_MATCH (Medium, '^organic$') AND Source = 'google' THEN 'Organic Search'
+WHEN Source= 'bing' AND Medium='(not set)' THEN 'Organic Search'
+WHEN Source= '.*bing.com' AND Medium='referral' THEN 'Organic Search'
+WHEN Source= 'google.com' AND Medium='referral' THEN 'Organic Search'
+WHEN Source= 'sogou.com' AND Medium='referral' THEN 'Organic Search'
+WHEN Source= 'aol' AND Medium='organic' THEN 'Organic Search'
+WHEN REGEXP_MATCH (Medium, '^organic$') OR REGEXP_MATCH(Source, 'duckduckgo|yandex|search.yahoo.com|.*dogpile.com|.*ecosia.org|.*duckduckgo.com|.*zapmetasearch.com|.*junosearch.net|.*quicksearch.mobi|(.*)web-search.co|(.*)nav-search.com|.*search.aol.com') THEN 'Organic Search'
+WHEN REGEXP_MATCH(Source, '.*searchencrypt.com|.*results.excite.com|.*results.searchlock.com|(.*)savvy.search.com|(.*)search.monstercrawler.com|(.*)search.avira.com|(.*)search.1and1.com|(.*)search.visymo.com|(.*)search.xfinity.com|(.*)search.metacrawler.com') THEN 'Organic Search'
+WHEN REGEXP_MATCH(Source, '(.*)searchassist.verizon.com|(.*)mysearch.com|(.*)mywebsearch.com|(.*)search.tb.ask.com|(.*)search.totalav.com|(.*)search.earthlink.net|(.*)search.frontier.com|(.*)search.lilo.org|(.*)searchencrypt.com') THEN 'Organic Search'
+WHEN REGEXP_MATCH (Medium, 'cpc|paid|paidsocial') AND REGEXP_MATCH (Source, 'facebook|instagram|pinterest|twitter|linkedin|fb_shopping|facebook-ads') THEN 'Paid Social'
+WHEN (Social Source Referral="Yes" OR REGEXP_MATCH(Medium,"^(social|social-network|social-media|sm|social network|social media)$")) THEN "Social"
+WHEN REGEXP_MATCH  (Source, 'facebook|instagram|pinterest|twitter|t.co|linkedin|linkedin.com|facebook.com|m.facebook.com|l.facebook.com|lm.facebook.com|lm.facebook.com|instagram.com|l.instagram.com|(.*)pinterest.com|(.*)pinterest.com.*|(.*)glassdoor.com||quora.com|reddit.com') THEN 'Social'
+WHEN REGEXP_MATCH (Source, 'youtube|YouTube|youtube.com') THEN 'YouTube'
+WHEN Default Channel Grouping(REGEXP_MATCH(Medium,"^(cpc|ppc|paidsearch)$") AND t0._ga:adDistributionNetwork_!="Content") AND REGEXP_MATCH(Query Match Type, 'Generic') THEN 'Generic Paid Search'
+WHEN REGEXP_MATCH(Medium,"^(cpc|ppc|paidsearch)$") AND t0._ga:adDistributionNetwork_!="Content" AND REGEXP_MATCH(Query Match Type, 'Brand') THEN 'Branded Paid Search'
 WHEN REGEXP_MATCH (Source, 'GO$|gemini|go$') AND REGEXP_MATCH(Medium, 'CPC|cpc|native') THEN 'Native Ads'
-WHEN REGEXP_MATCH (Medium, 'cpc') THEN 'Other Paid Search'
-WHEN Default Channel Grouping = 'Organic Search' AND NOT REGEXP_MATCH(Source, 'google') THEN 'Non-Google Organic Search'
-WHEN Default Channel Grouping = 'Organic Search' AND REGEXP_MATCH(Source, 'google') THEN 'Google Organic Search'
-WHEN Default Channel Grouping = 'Social' OR REGEXP_MATCH(Campaign, 'meetedgar') THEN 'Social'
-WHEN Default Channel Grouping = 'Email' THEN 'Email'
-WHEN Default Channel Grouping = 'Referral' THEN 'Referral'
-WHEN Default Channel Grouping = 'Other Advertising' THEN 'Other Advertising'
-WHEN Default Channel Grouping = 'Display' THEN 'Display'
-WHEN Default Channel Grouping = 'Direct' THEN 'Direct'
-ELSE 'Direct' 
+WHEN REGEXP_MATCH(Medium,"^(cpc|ppc|paidsearch)$") AND t0._ga:adDistributionNetwork_!="Content" THEN "Paid Search"
+WHEN REGEXP_MATCH(Medium," ^(cpv|cpa|cpp|content-text)$") THEN "Other Advertising"
+WHEN REGEXP_MATCH(Medium,"^(display|cpm|banner)$") OR Ad Distribution Network="Content" THEN "Display"
+WHEN REGEXP_MATCH (Source, 'perfectaudience|googleads.g.doubleclick.net|googleadservices.com') THEN 'Display'
+WHEN Medium="email" THEN "Email"
+WHEN Medium="affiliate" THEN "Affiliates"
+WHEN Medium="referral" THEN "Referral"
+WHEN ((Source="direct" AND Medium="(not set)") OR Medium="(none)") THEN "Direct"
+ELSE 'Other' 
 END
